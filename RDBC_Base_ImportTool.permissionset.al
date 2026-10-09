@@ -1,0 +1,39 @@
+namespace RDBC.ImportTool.Base;
+
+permissionset 85101 "RDBC_Base ImportTool"
+{
+    Assignable = true;
+    Permissions = tabledata RDBC_Base_DocImp_Staging = RIMD,
+        tabledata RDBC_Base_Related_Entry_Buffer = RIMD,
+        tabledata RDBC_Base_JnlImp_Staging = RIMD,
+        table RDBC_Base_DocImp_Staging = X,
+        table RDBC_Base_Related_Entry_Buffer = X,
+        table RDBC_Base_JnlImp_Staging = X,
+        codeunit RDBC_Base_PI_Processor = X,
+        codeunit RDBC_Base_DocImpExcelMgt = X,
+        codeunit RDBC_Base_DocImpProcessMgt = X,
+        codeunit RDBC_Base_DocImpValidationMgt = X,
+        codeunit RDBC_Base_PCM_Processor = X,
+        codeunit RDBC_Base_GenJournalProcessor = X,
+        codeunit RDBC_Base_ImportPostSubscriber = X,
+        codeunit RDBC_Base_JnlImpExcelMgt = X,
+        codeunit RDBC_Base_JnlImpProcessMgt = X,
+        codeunit RDBC_Base_JnlImpValidationMgt = X,
+        codeunit RDBC_Base_PO_Processor = X,
+        codeunit RDBC_Base_SO_Processor = X,
+        codeunit RDBC_Base_SI_Processor = X,
+        codeunit RDBC_Base_TryCreationGenJnl = X,
+        codeunit RDBC_Base_TryCreation_PO = X,
+        codeunit RDBC_Base_TryCreation_PI = X,
+        codeunit RDBC_Base_TryCreation_SI = X,
+        codeunit RDBC_Base_TryCreation_SO = X,
+        page RDBC_Base_DocImpExcel = X,
+        page RDBC_Base_DocImpRC_Cue = X,
+        page RDBC_Base_DocImp_Cues = X,
+        page RDBC_Base_Doc_Imp_Staging = X,
+        page RDBC_Base_DocImpStagingLookup = X,
+        page RDBC_Base_JnlImpExcel = X,
+        page RDBC_Base_JnlImp_Cues = X,
+        page RDBC_Base_JnlImp_Staging = X,
+        page RDBC_Base_Related_Entries = X;
+}
