@@ -59,7 +59,7 @@ codeunit 85147 "RDBC_Base_TryCreation_PO"
                         GroupRec."Posting Date");
                     PurchHeader.Validate("Document Date",
                         GroupRec."Document Date");
-                    PurchHeader.Validate("Vendor Invoice No.",
+                    PurchHeader.Validate("Vendor Order No.",
                         GroupRec."External Document No.");
                     PurchHeader.Validate("Tax Liable",
                         GroupRec."Tax Liable");

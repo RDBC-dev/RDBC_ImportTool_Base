@@ -19,6 +19,7 @@ codeunit 85122 "RDBC_Base_DocImpProcessMgt"
         SO: Codeunit "RDBC_Base_SO_Processor";
         SI: Codeunit "RDBC_Base_SI_Processor";
         SCM: Codeunit "RDBC_Base_SCM_Processor";
+        Events: Codeunit "RDBC_Base_Events";
 
     begin
         DataImportName := Staging."Data Import Name";
@@ -114,8 +115,11 @@ codeunit 85122 "RDBC_Base_DocImpProcessMgt"
 
             Staging."Document Import Type"::"SCM":
                 SCM.ShowProcessingResultForSCM(DataImportName);
-        //ShowProcessingResultForSCM(DataImportName);
+            //ShowProcessingResultForSCM(DataImportName);
 
+            else
+                // Document Import Types added by customer extensions (enumextension)
+                Events.OnShowProcessingResultCustomDocumentType(Staging."Document Import Type", DataImportName);
         end;
 
     end;
@@ -151,6 +155,8 @@ codeunit 85122 "RDBC_Base_DocImpProcessMgt"
             Staging."Document Import Type"::"SCM":
                 Process_SCM(GroupRec, Staging);
 
+            else
+                Process_CustomDocumentType(GroupRec, Staging);
         end;
     end;
 
@@ -232,6 +238,28 @@ codeunit 85122 "RDBC_Base_DocImpProcessMgt"
         MarkGroupAsProcessed(GroupRec, SalesNo);
     end;
 
+
+    // Document Import Types added by customer extensions (enumextension)
+    local procedure Process_CustomDocumentType(var GroupRec: Record "RDBC_Base_DocImp_Staging"; var Staging: Record "RDBC_Base_DocImp_Staging")
+    var
+        Events: Codeunit "RDBC_Base_Events";
+        DocumentNo: Code[20];
+        Success: Boolean;
+        IsHandled: Boolean;
+    begin
+        Events.OnProcessCustomDocumentType(GroupRec, Staging, DocumentNo, Success, IsHandled);
+
+        if not IsHandled then begin
+            LogProcessingError(GroupRec, StrSubstNo('Document Import Type %1 is not supported.', Staging."Document Import Type"));
+            exit;
+        end;
+
+        if not Success then begin
+            LogProcessingError(GroupRec, GetLastErrorText());
+            exit;
+        end;
+        MarkGroupAsProcessed(GroupRec, DocumentNo);
+    end;
 
     #ENDREGION DOCUMENT TYPE SPECIFIC PROCSEEING PROCEDURES
     // ****************************************************************************************
@@ -384,9 +412,15 @@ codeunit 85122 "RDBC_Base_DocImpProcessMgt"
 
     local procedure GetProgressMessages(): List of [Text]
     var
+        Events: Codeunit "RDBC_Base_Events";
         Messages: List of [Text];
+        IsHandled: Boolean;
     begin
-        //Customize these texts to your preferred processing messages.
+        // Customer extensions can replace these texts (OnGetDocumentProgressMessages)
+        Events.OnGetDocumentProgressMessages(Messages, IsHandled);
+        if IsHandled then
+            exit(Messages);
+
         Messages.Add('Doing the thing...');
         Messages.Add('Making progress... allegedly...');
         Messages.Add('Working hard, or hardly working...');

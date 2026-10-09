@@ -1,5 +1,8 @@
 codeunit 85130 "RDBC_Base_JnlImpExcelMgt"
 {
+    var
+        Events: Codeunit "RDBC_Base_Events";
+
     procedure ImportExcelToStaging(InStr: InStream; DataImportName: Text[50])
     var
         ExcelBuffer: Record "Excel Buffer" temporary;
@@ -67,14 +70,13 @@ codeunit 85130 "RDBC_Base_JnlImpExcelMgt"
             Staging."Shortcut Dimension 6" := GetCellValue(ExcelBuffer, CurrentRow, 18);
             Staging."Shortcut Dimension 7" := GetCellValue(ExcelBuffer, CurrentRow, 19);
             Staging."Shortcut Dimension 8" := GetCellValue(ExcelBuffer, CurrentRow, 20);
-            Staging."Additional Dimension 1 Value" := GetCellValue(ExcelBuffer, CurrentRow, 21);
-            Staging."Additional Dimension 2 Value" := GetCellValue(ExcelBuffer, CurrentRow, 22);
-            Staging."Additional Dimension 3 Value" := GetCellValue(ExcelBuffer, CurrentRow, 23);
+            // Columns 21-23 are customer-specific and read by the customer extensions (OnAfterReadJournalExcelRow)
             Staging."BU" := GetCellValue(ExcelBuffer, CurrentRow, 25);
             Staging.Comment := GetCellValue(ExcelBuffer, CurrentRow, 24);
             Staging."Applies-to Invoice No." := GetCellValue(ExcelBuffer, CurrentRow, 26);
             Staging."Data Import Name" := DataImportName;
             Staging."Entry No." := 0; // Auto-increment field, will be set on insert
+            Events.OnAfterReadJournalExcelRow(Staging, ExcelBuffer, CurrentRow);
             Staging.Insert(true);
 
             CurrentRow += 1;
@@ -151,14 +153,13 @@ codeunit 85130 "RDBC_Base_JnlImpExcelMgt"
                     Staging."Shortcut Dimension 6" := CopyStr(GetColumnValue(Columns, 18), 1, MaxStrLen(Staging."Shortcut Dimension 6"));
                     Staging."Shortcut Dimension 7" := CopyStr(GetColumnValue(Columns, 19), 1, MaxStrLen(Staging."Shortcut Dimension 7"));
                     Staging."Shortcut Dimension 8" := CopyStr(GetColumnValue(Columns, 20), 1, MaxStrLen(Staging."Shortcut Dimension 8"));
-                    Staging."Additional Dimension 1 Value" := CopyStr(GetColumnValue(Columns, 21), 1, MaxStrLen(Staging."Additional Dimension 1 Value"));
-                    Staging."Additional Dimension 2 Value" := CopyStr(GetColumnValue(Columns, 22), 1, MaxStrLen(Staging."Additional Dimension 2 Value"));
-                    Staging."Additional Dimension 3 Value" := CopyStr(GetColumnValue(Columns, 23), 1, MaxStrLen(Staging."Additional Dimension 3 Value"));
+                    // Columns 21-23 are customer-specific and read by the customer extensions (OnAfterReadJournalCsvRow)
                     Staging."BU" := CopyStr(GetColumnValue(Columns, 25), 1, MaxStrLen(Staging."BU"));
                     Staging.Comment := CopyStr(GetColumnValue(Columns, 24), 1, MaxStrLen(Staging.Comment));
                     Staging."Applies-to Invoice No." := CopyStr(GetColumnValue(Columns, 26), 1, MaxStrLen(Staging."Applies-to Invoice No."));
                     Staging."Data Import Name" := DataImportName;
                     Staging."Entry No." := 0; // Auto-increment field, will be set on insert
+                    Events.OnAfterReadJournalCsvRow(Staging, Columns);
                     Staging.Insert(true);
                 end;
         end;

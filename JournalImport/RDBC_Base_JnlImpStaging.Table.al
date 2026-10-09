@@ -41,11 +41,9 @@ table 85111 "RDBC_Base_JnlImp_Staging"
         field(27; Posted; Boolean) { DataClassification = CustomerContent; }
         field(28; "Document Created"; Code[20]) { DataClassification = CustomerContent; }
         field(29; "Comment"; Text[250]) { DataClassification = CustomerContent; }
-        field(31; "Additional Dimension 1 Value"; Code[20]) { DataClassification = CustomerContent; Caption = 'CUSTOMERGROUP'; }
-        field(33; "Additional Dimension 2 Value"; Code[20]) { DataClassification = CustomerContent; Caption = 'VENDORGROUP'; }
-        field(35; "Additional Dimension 3 Value"; Code[20]) { DataClassification = CustomerContent; Caption = 'PARENTCOMPANY'; }
+        // Fields 31, 33 and 35 (Additional Dimensions) are customer-specific and added by the customer extensions.
         field(37; "BU"; Code[20]) { DataClassification = CustomerContent; Caption = 'BUSINESSUNIT'; }
-        field(38; "Applies-to Invoice No."; Code[20]) { DataClassification = CustomerContent; }
+        field(38; "Applies-to Invoice No."; Text[100]) { DataClassification = CustomerContent; }
     }
 
     keys
@@ -66,8 +64,5 @@ table 85111 "RDBC_Base_JnlImp_Staging"
     begin
         if Rec.Posted then
             Error('You cannot delete this entry because it has already been posted.');
-
-        if Rec.Processed then
-            Error('You cannot delete this entry because it has already been processed.');
     end;
 }

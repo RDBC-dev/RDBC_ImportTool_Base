@@ -2,4 +2,6 @@
 .snapshots/
 *.app
 rad.json
-.vscode/launch.json.DS_Store
+.vscode/launch.json
+.DS_Store
+

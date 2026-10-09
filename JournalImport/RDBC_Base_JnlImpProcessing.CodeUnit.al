@@ -455,10 +455,15 @@ codeunit 85132 "RDBC_Base_JnlImpProcessMgt"
 
     local procedure GetJnlProgressMessages(): List of [Text]
     var
+        Events: Codeunit "RDBC_Base_Events";
         Messages: List of [Text];
+        IsHandled: Boolean;
     begin
-        // HR / journal import messages — cannabis context preserved.
-        // Add, remove or edit lines freely.
+        // Customer extensions can replace these texts (OnGetJournalProgressMessages)
+        Events.OnGetJournalProgressMessages(Messages, IsHandled);
+        if IsHandled then
+            exit(Messages);
+
         Messages.Add('Doing the thing...');
         Messages.Add('Making progress... allegedly...');
         Messages.Add('Working hard, or hardly working...');

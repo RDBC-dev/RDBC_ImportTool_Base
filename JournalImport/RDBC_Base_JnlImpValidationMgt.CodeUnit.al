@@ -20,6 +20,7 @@ codeunit 85131 "RDBC_Base_JnlImpValidationMgt"
 
     local procedure ValidateSingleLine(var Staging: Record "RDBC_Base_JnlImp_Staging"): Boolean
     var
+        Events: Codeunit "RDBC_Base_Events";
         ErrorText: Text[1024];
     begin
         ErrorText := '';
@@ -35,6 +36,8 @@ codeunit 85131 "RDBC_Base_JnlImpValidationMgt"
             Staging."Journal Import Type"::"Purchase Payment":
                 ValidatePurchasePayment(Staging, ErrorText);
         end;
+
+        Events.OnAfterValidateJournalLine(Staging, ErrorText);
 
         if ErrorText = '' then begin
             Staging.Validated := true;
@@ -102,9 +105,6 @@ codeunit 85131 "RDBC_Base_JnlImpValidationMgt"
         ValidateDimension(6, Staging."Shortcut Dimension 6", ErrorText);
         ValidateDimension(7, Staging."Shortcut Dimension 7", ErrorText);
         ValidateDimension(8, Staging."Shortcut Dimension 8", ErrorText);
-        // ValidateAdditionalDimension('CUSTOMERGROUP', Staging."Additional Dimension 1 Value", ErrorText);
-        // ValidateAdditionalDimension('VENDORGROUP', Staging."Additional Dimension 2 Value", ErrorText);
-        // ValidateAdditionalDimension('PARENTCOMPANY', Staging."Additional Dimension 3 Value", ErrorText);
         ValidateBusinessUnit(Staging.BU, ErrorText);
 
     end;
@@ -128,9 +128,6 @@ codeunit 85131 "RDBC_Base_JnlImpValidationMgt"
         ValidateDimension(6, Staging."Shortcut Dimension 6", ErrorText);
         ValidateDimension(7, Staging."Shortcut Dimension 7", ErrorText);
         ValidateDimension(8, Staging."Shortcut Dimension 8", ErrorText);
-        // ValidateAdditionalDimension('CUSTOMERGROUP', Staging."Additional Dimension 1 Value", ErrorText);
-        // ValidateAdditionalDimension('VENDORGROUP', Staging."Additional Dimension 2 Value", ErrorText);
-        // ValidateAdditionalDimension('PARENTCOMPANY', Staging."Additional Dimension 3 Value", ErrorText);
         ValidateBusinessUnit(Staging.BU, ErrorText);
     end;
 
@@ -153,9 +150,6 @@ codeunit 85131 "RDBC_Base_JnlImpValidationMgt"
         ValidateDimension(6, Staging."Shortcut Dimension 6", ErrorText);
         ValidateDimension(7, Staging."Shortcut Dimension 7", ErrorText);
         ValidateDimension(8, Staging."Shortcut Dimension 8", ErrorText);
-        // ValidateAdditionalDimension('CUSTOMERGROUP', Staging."Additional Dimension 1 Value", ErrorText);
-        // ValidateAdditionalDimension('VENDORGROUP', Staging."Additional Dimension 2 Value", ErrorText);
-        // ValidateAdditionalDimension('PARENTCOMPANY', Staging."Additional Dimension 3 Value", ErrorText);
         ValidateBusinessUnit(Staging.BU, ErrorText);
     end;
 
@@ -743,34 +737,6 @@ codeunit 85131 "RDBC_Base_JnlImpValidationMgt"
                     StrSubstNo(
                         'Dimension value %1 in dimension %2 is blocked.',
                         DimValueCode, DimCode));
-    end;
-
-    local procedure ValidateAdditionalDimension(DimCode: Code[20]; DimValueCode: Code[20]; var ErrorText: Text[1024])
-    var
-        Dim: Record Dimension;
-        DimValue: Record "Dimension Value";
-    begin
-        if DimValueCode = '' then
-            exit;
-
-        if not Dim.Get(DimCode) then begin
-            AddError(
-                ErrorText,
-                StrSubstNo('Dimension %1 does not exist.', DimCode));
-            exit;
-        end;
-
-        if not DimValue.Get(DimCode, DimValueCode) then begin
-            AddError(
-                ErrorText,
-                StrSubstNo('Dimension value %1 does not exist in dimension %2.', DimValueCode, DimCode));
-            exit;
-        end;
-
-        if DimValue.Blocked then
-            AddError(
-                ErrorText,
-                StrSubstNo('Dimension value %1 in dimension %2 is blocked.', DimValueCode, DimCode));
     end;
 
     local procedure ValidateBusinessUnit(BusinessUnitCode: Code[20]; var ErrorText: Text[1024])

@@ -28,7 +28,9 @@ codeunit 85121 "RDBC_Base_DocImpValidationMgt"
 
     local procedure ValidateSingleLine(var Staging: Record "RDBC_Base_DocImp_Staging"): Boolean
     var
+        Events: Codeunit "RDBC_Base_Events";
         ErrorText: Text[1024];
+        IsHandled: Boolean;
     begin
         ErrorText := '';
 
@@ -54,7 +56,16 @@ codeunit 85121 "RDBC_Base_DocImpValidationMgt"
             Staging."Document Import Type"::"SCM":
                 ValidateSCM(Staging, ErrorText);
 
+            else begin
+                // Document Import Types added by customer extensions (enumextension)
+                IsHandled := false;
+                Events.OnValidateCustomDocumentType(Staging, ErrorText, IsHandled);
+                if not IsHandled then
+                    AddError(ErrorText, StrSubstNo('Document Import Type %1 is not supported.', Staging."Document Import Type"));
+            end;
         end;
+
+        Events.OnAfterValidateDocumentLine(Staging, ErrorText);
 
         if ErrorText = '' then begin
             Staging.Validated := true;
@@ -114,6 +125,22 @@ codeunit 85121 "RDBC_Base_DocImpValidationMgt"
         ValidateDataImportName(Staging, ErrorText);
         ValidateDates(Staging, ErrorText);
         ValidateVendorBusinessRelation(Staging, ErrorText);
+
+        #Region External Document Number
+        PurchHeader.SetRange("Document Type", PurchHeader."Document Type"::Order);
+        PurchHeader.SetRange("Buy-from Vendor No.", Staging."Business Relation No.");
+        PurchHeader.SetRange("Vendor Order No.", Staging."External Document No.");
+
+        if PurchHeader.FindFirst() then begin
+            AddError(ErrorText,
+                StrSubstNo(
+                    'Vendor Order No. %1 already exists in document %2.',
+                    Staging."External Document No.",
+                    PurchHeader."No."));
+            exit;
+        end;
+        #Endregion
+
         ValidateTaxSetup(Staging, ErrorText);
         ValidateLineTypeAndNo(Staging, ErrorText);
         ValidateDescription(Staging);
@@ -229,10 +256,9 @@ codeunit 85121 "RDBC_Base_DocImpValidationMgt"
 
         #Endregion
 
-        // APPLY TO DOCUMENT (column 26)
-        if Staging."Apply to Document" = '' then
-            AddError(ErrorText, 'Apply to Document must contain a value for Purchase Credit Memos so it can be applied to an invoice when posted.')
-        else
+        // APPLY TO DOCUMENT (column 26) - optional; when left blank the credit memo
+        // is posted unapplied and can be applied manually afterwards.
+        if Staging."Apply to Document" <> '' then
             case FindPostedPurchaseInvoice(Staging, PurchInvHeader) of
                 "RDBC_Base_ApplyToMatchResult"::None:
                     AddError(ErrorText, StrSubstNo('No Posted Purchase Invoice with No. or Vendor Invoice No. (External Document No.) %1 was found for vendor %2.', Staging."Apply to Document", Staging."Business Relation No."));
@@ -307,6 +333,22 @@ codeunit 85121 "RDBC_Base_DocImpValidationMgt"
         ValidateDataImportName(Staging, ErrorText);
         ValidateDates(Staging, ErrorText);
         ValidateCustomerBusinessRelation(Staging, ErrorText);
+
+        #Region External Document Number
+        SalesHeader.SetRange("Document Type", SalesHeader."Document Type"::Order);
+        SalesHeader.SetRange("Sell-to Customer No.", Staging."Business Relation No.");
+        SalesHeader.SetRange("External Document No.", Staging."External Document No.");
+
+        if SalesHeader.FindFirst() then begin
+            AddError(ErrorText,
+                StrSubstNo(
+                    'External Document No. %1 already exists in Sales document %2.',
+                    Staging."External Document No.",
+                    SalesHeader."No."));
+            exit;
+        end;
+        #Endregion
+
         ValidateLineTypeAndNo(Staging, ErrorText);
         ValidateDescription(Staging);
         ValidateLocation(Staging, ErrorText);
@@ -333,6 +375,32 @@ codeunit 85121 "RDBC_Base_DocImpValidationMgt"
         ValidateDataImportName(Staging, ErrorText);
         ValidateDates(Staging, ErrorText);
         ValidateCustomerBusinessRelation(Staging, ErrorText);
+
+        #Region External Document Number
+        SalesHeader.SetRange("Document Type", SalesHeader."Document Type"::Order);
+        SalesHeader.SetRange("Sell-to Customer No.", Staging."Business Relation No.");
+        SalesHeader.SetRange("External Document No.", Staging."External Document No.");
+
+        if SalesHeader.FindFirst() then begin
+            AddError(ErrorText,
+                StrSubstNo(
+                    'External Document No. %1 already exists in Sales document %2.',
+                    Staging."External Document No.",
+                    SalesHeader."No."));
+            exit;
+        end;
+
+        SalesInvHeader.SetRange("Sell-to Customer No.", Staging."Business Relation No.");
+        SalesInvHeader.SetRange("External Document No.", Staging."External Document No.");
+
+        if SalesInvHeader.FindFirst() then
+            AddError(ErrorText,
+                StrSubstNo(
+                    'External Document No. %1 already exists in Posted Sales Invoice %2.',
+                    Staging."External Document No.",
+                    SalesInvHeader."No."));
+        #Endregion
+
         ValidateLineTypeAndNo(Staging, ErrorText);
         ValidateDescription(Staging);
         ValidateLocation(Staging, ErrorText);
@@ -361,10 +429,35 @@ codeunit 85121 "RDBC_Base_DocImpValidationMgt"
         ValidateDataImportName(Staging, ErrorText);
         ValidateDates(Staging, ErrorText);
         ValidateCustomerBusinessRelation(Staging, ErrorText);
-        // APPLY TO DOCUMENT (column 26)
-        if Staging."Apply to Document" = '' then
-            AddError(ErrorText, 'Apply to Document must contain a value for Sales Credit Memos so it can be applied to an invoice when posted.')
-        else
+
+        #Region External Document Number
+        SalesHeader.SetRange("Document Type", SalesHeader."Document Type"::Order);
+        SalesHeader.SetRange("Sell-to Customer No.", Staging."Business Relation No.");
+        SalesHeader.SetRange("External Document No.", Staging."External Document No.");
+
+        if SalesHeader.FindFirst() then begin
+            AddError(ErrorText,
+                StrSubstNo(
+                    'External Document No. %1 already exists in Sales document %2.',
+                    Staging."External Document No.",
+                    SalesHeader."No."));
+            exit;
+        end;
+
+        SalesCMHeader.SetRange("Sell-to Customer No.", Staging."Business Relation No.");
+        SalesCMHeader.SetRange("External Document No.", Staging."External Document No.");
+
+        if SalesCMHeader.FindFirst() then
+            AddError(ErrorText,
+                StrSubstNo(
+                    'External Document No. %1 already exists in Posted Sales Credit Memo %2.',
+                    Staging."External Document No.",
+                    SalesCMHeader."No."));
+        #Endregion
+
+        // APPLY TO DOCUMENT (column 26) - optional; when left blank the credit memo
+        // is posted unapplied and can be applied manually afterwards.
+        if Staging."Apply to Document" <> '' then
             case FindPostedSalesInvoice(Staging, SalesInvHeader) of
                 "RDBC_Base_ApplyToMatchResult"::None:
                     AddError(ErrorText, StrSubstNo('No Posted Sales Invoice with No., External Document No. or Your Reference %1 was found for customer %2.', Staging."Apply to Document", Staging."Business Relation No."));
@@ -379,8 +472,8 @@ codeunit 85121 "RDBC_Base_DocImpValidationMgt"
         ValidateTaxGroup(Staging, ErrorText);
         ValidateAmounts(Staging, ErrorText);
         ValidateDimension(1, Staging."Shortcut Dimension 1", ErrorText);
-        ValidateDimension(3, Staging."Shortcut Dimension 3", ErrorText);
         ValidateDimension(2, Staging."Shortcut Dimension 2", ErrorText);
+        ValidateDimension(3, Staging."Shortcut Dimension 3", ErrorText);
         ValidateDimension(4, Staging."Shortcut Dimension 4", ErrorText);
         ValidateDimension(5, Staging."Shortcut Dimension 5", ErrorText);
         ValidateDimension(6, Staging."Shortcut Dimension 6", ErrorText);

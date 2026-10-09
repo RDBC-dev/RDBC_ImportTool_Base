@@ -2,6 +2,7 @@ page 85104 "RDBC_Base_DocImpRC_Cue"
 {
     PageType = CardPart;
     SourceTable = "RDBC_Base_DocImp_Staging";
+    SourceTableTemporary = true;
     ApplicationArea = All;
     Caption = 'RDBC Import Tool';
 
@@ -73,9 +74,10 @@ page 85104 "RDBC_Base_DocImpRC_Cue"
 
             }
 
-            /*
             cuegroup("Journal Imports")
             {
+                Visible = ShowJnlTiles;
+
                 // Validation Errors
                 field("Jnl Validation Errors"; ValidationJnlErrorCount)
                 {
@@ -137,10 +139,7 @@ page 85104 "RDBC_Base_DocImpRC_Cue"
                         StagingPage.Run();
                     end;
                 }
-            
-
             }
-            */
             cuegroup("Upload Options")
             {
                 actions
@@ -155,15 +154,16 @@ page 85104 "RDBC_Base_DocImpRC_Cue"
                         RunObject = page RDBC_Base_DocImpExcel; // Replace with your page
                         RunPageMode = Create; // <-- THIS is the magic property that makes the "+" icon appear
                     }
-                    // action(NewJnlImport)
-                    // {
-                    //     ApplicationArea = All;
-                    //     Caption = 'Journal Import';
-                    //     ToolTip = 'Create new journal entries.';
-                    //     Image = TileNew;
-                    //     RunObject = page RDBC_Base_JnlImpExcel; // Replace with your page
-                    //     RunPageMode = Create; // <-- THIS is the magic property that makes the "+" icon appear
-                    // }
+                    action(NewJnlImport)
+                    {
+                        ApplicationArea = All;
+                        Caption = 'Journal Import';
+                        ToolTip = 'Create new journal entries.';
+                        Image = TileNew;
+                        Visible = ShowJnlTiles;
+                        RunObject = page RDBC_Base_JnlImpExcel;
+                        RunPageMode = Create; // <-- THIS is the magic property that makes the "+" icon appear
+                    }
                 }
             }
         }
@@ -178,9 +178,21 @@ page 85104 "RDBC_Base_DocImpRC_Cue"
         ValidationAllDocCount: Integer;
         MyImportsCount: Integer;
         ImportTile: Integer;
+        ShowJnlTiles: Boolean;
 
     trigger OnOpenPage()
+    var
+        Events: Codeunit "RDBC_Base_Events";
     begin
+        // Journal Import tiles are shown unless a customer extension hides them
+        ShowJnlTiles := true;
+        Events.OnShowJournalImportTiles(ShowJnlTiles);
+
+        // SourceTable is temporary and only used to satisfy the Card Part's need for a
+        // current record - without it, the cue renders blank whenever the real staging
+        // table has no rows, regardless of the counts computed below.
+        Rec.Init();
+        Rec.Insert();
         UpdateCounts();
         UpdateJnlCounts();
     end;
@@ -236,6 +248,7 @@ page 85103 "RDBC_Base_DocImp_Cues"
 {
     PageType = CardPart;
     SourceTable = "RDBC_Base_DocImp_Staging";
+    SourceTableTemporary = true;
     ApplicationArea = All;
     Caption = 'RDBC Document Import';
 
@@ -305,24 +318,26 @@ page 85103 "RDBC_Base_DocImp_Cues"
                 }
 
             }
-            // cuegroup("Journal Import")
-            // {
-            //     field("Import Journal"; ImportTile)
-            //     {
-            //         Caption = 'Import Journal Lines';
-            //         ApplicationArea = All;
-            //         DrillDown = true;
-            //         Editable = false;
-            //         Image = Library;
-            //         BlankZero = true;
-            //         Style = Strong;
-            //         ToolTip = 'Upload an Excel to import Journal lines.';
-            //         trigger OnDrillDown()
-            //         begin
-            //             Page.Run(Page::"RDBC_Base_JnlImpExcel");
-            //         end;
-            //     }
-            // }
+            cuegroup("Journal Import")
+            {
+                Visible = ShowJnlTiles;
+
+                field("Import Journal"; ImportTile)
+                {
+                    Caption = 'Import Journal Lines';
+                    ApplicationArea = All;
+                    DrillDown = true;
+                    Editable = false;
+                    Image = Library;
+                    BlankZero = true;
+                    Style = Strong;
+                    ToolTip = 'Upload an Excel to import Journal lines.';
+                    trigger OnDrillDown()
+                    begin
+                        Page.Run(Page::"RDBC_Base_JnlImpExcel");
+                    end;
+                }
+            }
         }
     }
 
@@ -332,9 +347,21 @@ page 85103 "RDBC_Base_DocImp_Cues"
         ValidationAllCount: Integer;
         MyImportsCount: Integer;
         ImportTile: Integer;
+        ShowJnlTiles: Boolean;
 
     trigger OnOpenPage()
+    var
+        Events: Codeunit "RDBC_Base_Events";
     begin
+        // Journal Import tiles are shown unless a customer extension hides them
+        ShowJnlTiles := true;
+        Events.OnShowJournalImportTiles(ShowJnlTiles);
+
+        // SourceTable is temporary and only used to satisfy the Card Part's need for a
+        // current record - without it, the cue renders blank whenever the real staging
+        // table has no rows, regardless of the counts computed below.
+        Rec.Init();
+        Rec.Insert();
         UpdateCounts();
     end;
 
@@ -369,6 +396,7 @@ page 85105 "RDBC_Base_JnlImp_Cues"
 {
     PageType = CardPart;
     SourceTable = "RDBC_Base_JnlImp_Staging";
+    SourceTableTemporary = true;
     ApplicationArea = All;
     Caption = 'RDBC Journal Import Tool';
 
@@ -468,6 +496,11 @@ page 85105 "RDBC_Base_JnlImp_Cues"
 
     trigger OnOpenPage()
     begin
+        // SourceTable is temporary and only used to satisfy the Card Part's need for a
+        // current record - without it, the cue renders blank whenever the real staging
+        // table has no rows, regardless of the counts computed below.
+        Rec.Init();
+        Rec.Insert();
         UpdateCounts();
     end;
 

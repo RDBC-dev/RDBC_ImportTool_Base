@@ -46,7 +46,7 @@ table 85100 "RDBC_Base_DocImp_Staging"
         field(32; Posted; Boolean) { DataClassification = CustomerContent; }
         field(33; "Document Created"; Code[20]) { DataClassification = CustomerContent; }
         field(34; "Line Discount %"; Decimal) { DataClassification = CustomerContent; }
-        field(40; "Apply to Document"; Text[50]) { DataClassification = CustomerContent; }
+        field(40; "Apply to Document"; Text[100]) { DataClassification = CustomerContent; }
 
     }
 
@@ -57,4 +57,13 @@ table 85100 "RDBC_Base_DocImp_Staging"
         key(DataImport; "Data Import Name") { }
         key(DocGroup; "Data Import Name", "Document Import Type", "Business Relation No.", "External Document No.") { }
     }
+
+    trigger OnDelete()
+    begin
+        if Rec.Posted then
+            Error('You cannot delete this entry because it has already been posted.');
+
+        if Rec.Processed then
+            Error('You cannot delete this entry because it has already been processed.');
+    end;
 }

@@ -31,6 +31,8 @@ codeunit 85151 "RDBC_Base_TryCreationGenJnl"
         TempDimSetEntry: Record "Dimension Set Entry" temporary;
         NewDimSetID: Integer;
         GLSetup: Record "General Ledger Setup";
+        Events: Codeunit "RDBC_Base_Events";
+        HasCustomerDimensions: Boolean;
 
         GenJnlTemplateName: Code[10];
         GenJnlBatchName: Code[10];
@@ -105,11 +107,13 @@ codeunit 85151 "RDBC_Base_TryCreationGenJnl"
 
                 // ========== DIMENSION LOGIC ==========
 
-                if HasAnyImportedDimension(GroupRec) then begin
-                    // TempDimSetEntry.DeleteAll();
+                DimMgt.GetDimensionSet(TempDimSetEntry, GenJnl."Dimension Set ID");
 
-                    DimMgt.GetDimensionSet(TempDimSetEntry, GenJnl."Dimension Set ID");
+                // Customer extensions add their own dimensions here (e.g. Additional Dimensions)
+                HasCustomerDimensions := false;
+                Events.OnAddJournalDimensions(GroupRec, TempDimSetEntry, HasCustomerDimensions);
 
+                if HasAnyImportedDimension(GroupRec) or HasCustomerDimensions then begin
                     UpdateShortcutDim(TempDimSetEntry, GLSetup."Shortcut Dimension 1 Code", GroupRec."Shortcut Dimension 1");
                     UpdateShortcutDim(TempDimSetEntry, GLSetup."Shortcut Dimension 2 Code", GroupRec."Shortcut Dimension 2");
                     UpdateShortcutDim(TempDimSetEntry, GLSetup."Shortcut Dimension 3 Code", GroupRec."Shortcut Dimension 3");
@@ -118,9 +122,6 @@ codeunit 85151 "RDBC_Base_TryCreationGenJnl"
                     UpdateShortcutDim(TempDimSetEntry, GLSetup."Shortcut Dimension 6 Code", GroupRec."Shortcut Dimension 6");
                     UpdateShortcutDim(TempDimSetEntry, GLSetup."Shortcut Dimension 7 Code", GroupRec."Shortcut Dimension 7");
                     UpdateShortcutDim(TempDimSetEntry, GLSetup."Shortcut Dimension 8 Code", GroupRec."Shortcut Dimension 8");
-                    UpdateAdditionalDim(TempDimSetEntry, 'CUSTOMERGROUP', GroupRec."Additional Dimension 1 Value");
-                    UpdateAdditionalDim(TempDimSetEntry, 'VENDORGROUP', GroupRec."Additional Dimension 2 Value");
-                    UpdateAdditionalDim(TempDimSetEntry, 'PARENTCOMPANY', GroupRec."Additional Dimension 3 Value");
 
                     NewDimSetID := DimMgt.GetDimensionSetID(TempDimSetEntry);
 
@@ -154,42 +155,15 @@ codeunit 85151 "RDBC_Base_TryCreationGenJnl"
             (GroupRec."Shortcut Dimension 6" <> '') or
             (GroupRec."Shortcut Dimension 7" <> '') or
             (GroupRec."Shortcut Dimension 8" <> '') or
-            (GroupRec."Additional Dimension 1 Value" <> '') or
-            (GroupRec."Additional Dimension 2 Value" <> '') or
-            (GroupRec."Additional Dimension 3 Value" <> '') or
             (GroupRec.BU <> '')
         );
     end;
 
     local procedure UpdateShortcutDim(var TempDimSetEntry: Record "Dimension Set Entry" temporary; DimCode: Code[20]; DimValueCode: Code[20])
     var
-        DimValue: Record "Dimension Value";
+        ImportHelper: Codeunit "RDBC_Base_ImportHelper";
     begin
-        if (DimCode = '') or (DimValueCode = '') then
-            exit;
-
-        if not DimValue.Get(DimCode, DimValueCode) then
-            Error(
-                'Dimension value %1 does not exist in dimension %2.',
-                DimValueCode,
-                DimCode);
-
-        // Remove existing dimension for this DimCode
-        TempDimSetEntry.SetRange("Dimension Code", DimCode);
-        TempDimSetEntry.DeleteAll();
-        TempDimSetEntry.SetRange("Dimension Code");
-
-        // Insert new one
-        TempDimSetEntry.Init();
-        TempDimSetEntry."Dimension Code" := DimCode;
-        TempDimSetEntry."Dimension Value Code" := DimValueCode;
-        TempDimSetEntry."Dimension Value ID" := DimValue."Dimension Value ID";
-        TempDimSetEntry.Insert();
-    end;
-
-    local procedure UpdateAdditionalDim(var TempDimSetEntry: Record "Dimension Set Entry" temporary; DimCode: Code[20]; DimValueCode: Code[20])
-    begin
-        UpdateShortcutDim(TempDimSetEntry, DimCode, DimValueCode);
+        ImportHelper.SetDimension(TempDimSetEntry, DimCode, DimValueCode);
     end;
 
     local procedure GetTemplateName(JournalImportType: Enum "RDBC_Base_JnlImpType"): Code[10]
