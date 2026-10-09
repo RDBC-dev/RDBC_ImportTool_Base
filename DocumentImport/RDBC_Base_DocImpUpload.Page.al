@@ -161,4 +161,11 @@ page 85100 "RDBC_Base_DocImpExcel"
             FileName);
     end;
 
+
+    trigger OnOpenPage()
+    var
+        Features: Codeunit "RDBC_Base_Features";
+    begin
+        Features.CheckDocumentUploadAllowed();
+    end;
 }

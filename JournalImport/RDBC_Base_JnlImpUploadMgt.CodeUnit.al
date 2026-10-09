@@ -5,6 +5,7 @@ codeunit 85130 "RDBC_Base_JnlImpExcelMgt"
 
     procedure ImportExcelToStaging(InStr: InStream; DataImportName: Text[50])
     var
+        Features: Codeunit "RDBC_Base_Features";
         ExcelBuffer: Record "Excel Buffer" temporary;
         Staging: Record "RDBC_Base_JnlImp_Staging";
         CurrentRow: Integer;
@@ -15,6 +16,7 @@ codeunit 85130 "RDBC_Base_JnlImpExcelMgt"
         LineAmountText: Text;
 
     begin
+        Features.CheckJournalUploadAllowed();
         if DataImportName = '' then
             Error('Data Import Name must be filled.');
 
@@ -87,6 +89,7 @@ codeunit 85130 "RDBC_Base_JnlImpExcelMgt"
 
     procedure ImportCsvToStaging(InStr: InStream; DataImportName: Text[50])
     var
+        Features: Codeunit "RDBC_Base_Features";
         Staging: Record "RDBC_Base_JnlImp_Staging";
         LineText: Text;
         Columns: List of [Text];
@@ -95,6 +98,7 @@ codeunit 85130 "RDBC_Base_JnlImpExcelMgt"
         IsFirstLine: Boolean;
         EvalOk: Boolean;
     begin
+        Features.CheckJournalUploadAllowed();
         if DataImportName = '' then
             Error('Data Import Name must be filled.');
 

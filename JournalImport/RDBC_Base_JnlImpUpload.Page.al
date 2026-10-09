@@ -157,4 +157,11 @@ page 85110 "RDBC_Base_JnlImpExcel"
             FileName);
     end;
 
+
+    trigger OnOpenPage()
+    var
+        Features: Codeunit "RDBC_Base_Features";
+    begin
+        Features.CheckJournalUploadAllowed();
+    end;
 }

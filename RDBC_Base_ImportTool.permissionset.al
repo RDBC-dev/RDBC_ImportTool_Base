@@ -37,5 +37,6 @@ permissionset 85101 "RDBC_Base ImportTool"
         page RDBC_Base_JnlImp_Staging = X,
         page RDBC_Base_Related_Entries = X,
         codeunit RDBC_Base_Events = X,
-        codeunit RDBC_Base_ImportHelper = X;
+        codeunit RDBC_Base_ImportHelper = X,
+        codeunit RDBC_Base_Features = X;
 }

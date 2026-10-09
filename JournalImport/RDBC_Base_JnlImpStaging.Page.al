@@ -165,4 +165,11 @@ page 85111 "RDBC_Base_JnlImp_Staging"
         else
             IsEditable := true;
     end;
+
+    trigger OnOpenPage()
+    var
+        Features: Codeunit "RDBC_Base_Features";
+    begin
+        Features.CheckJournalUploadAllowed();
+    end;
 }

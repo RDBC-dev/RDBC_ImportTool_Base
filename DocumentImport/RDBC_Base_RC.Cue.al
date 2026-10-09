@@ -187,12 +187,15 @@ page 85104 "RDBC_Base_DocImpRC_Cue"
     trigger OnOpenPage()
     var
         Events: Codeunit "RDBC_Base_Events";
+        Features: Codeunit "RDBC_Base_Features";
     begin
-        // Document and Journal Import tiles are shown unless a customer extension hides them
-        ShowDocTiles := true;
-        Events.OnShowDocumentImportTiles(ShowDocTiles);
-        ShowJnlTiles := true;
-        Events.OnShowJournalImportTiles(ShowJnlTiles);
+        // Tiles are shown when the import area is allowed, unless a customer extension hides them
+        ShowDocTiles := Features.IsDocumentUploadAllowed();
+        if ShowDocTiles then
+            Events.OnShowDocumentImportTiles(ShowDocTiles);
+        ShowJnlTiles := Features.IsJournalUploadAllowed();
+        if ShowJnlTiles then
+            Events.OnShowJournalImportTiles(ShowJnlTiles);
 
         // SourceTable is temporary and only used to satisfy the Card Part's need for a
         // current record - without it, the cue renders blank whenever the real staging
@@ -361,12 +364,15 @@ page 85103 "RDBC_Base_DocImp_Cues"
     trigger OnOpenPage()
     var
         Events: Codeunit "RDBC_Base_Events";
+        Features: Codeunit "RDBC_Base_Features";
     begin
-        // Document and Journal Import tiles are shown unless a customer extension hides them
-        ShowDocTiles := true;
-        Events.OnShowDocumentImportTiles(ShowDocTiles);
-        ShowJnlTiles := true;
-        Events.OnShowJournalImportTiles(ShowJnlTiles);
+        // Tiles are shown when the import area is allowed, unless a customer extension hides them
+        ShowDocTiles := Features.IsDocumentUploadAllowed();
+        if ShowDocTiles then
+            Events.OnShowDocumentImportTiles(ShowDocTiles);
+        ShowJnlTiles := Features.IsJournalUploadAllowed();
+        if ShowJnlTiles then
+            Events.OnShowJournalImportTiles(ShowJnlTiles);
 
         // SourceTable is temporary and only used to satisfy the Card Part's need for a
         // current record - without it, the cue renders blank whenever the real staging
@@ -514,12 +520,15 @@ page 85105 "RDBC_Base_JnlImp_Cues"
     trigger OnOpenPage()
     var
         Events: Codeunit "RDBC_Base_Events";
+        Features: Codeunit "RDBC_Base_Features";
     begin
-        // Document and Journal Import tiles are shown unless a customer extension hides them
-        ShowDocTiles := true;
-        Events.OnShowDocumentImportTiles(ShowDocTiles);
-        ShowJnlTiles := true;
-        Events.OnShowJournalImportTiles(ShowJnlTiles);
+        // Tiles are shown when the import area is allowed, unless a customer extension hides them
+        ShowDocTiles := Features.IsDocumentUploadAllowed();
+        if ShowDocTiles then
+            Events.OnShowDocumentImportTiles(ShowDocTiles);
+        ShowJnlTiles := Features.IsJournalUploadAllowed();
+        if ShowJnlTiles then
+            Events.OnShowJournalImportTiles(ShowJnlTiles);
 
         // SourceTable is temporary and only used to satisfy the Card Part's need for a
         // current record - without it, the cue renders blank whenever the real staging

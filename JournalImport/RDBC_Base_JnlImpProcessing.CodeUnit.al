@@ -2,6 +2,7 @@ codeunit 85132 "RDBC_Base_JnlImpProcessMgt"
 {
     procedure ProcessValidatedJnlLines(var Staging: Record "RDBC_Base_JnlImp_Staging")
     var
+        Features: Codeunit "RDBC_Base_Features";
         DataImportName: Text[50];
         CheckRec: Record "RDBC_Base_JnlImp_Staging";
 
@@ -20,6 +21,7 @@ codeunit 85132 "RDBC_Base_JnlImpProcessMgt"
         MoreGroups: Boolean;
 
     begin
+        Features.CheckJournalUploadAllowed();
         DataImportName := Staging."Data Import Name";
 
         GenJnlTemplateName := 'GENERAL';

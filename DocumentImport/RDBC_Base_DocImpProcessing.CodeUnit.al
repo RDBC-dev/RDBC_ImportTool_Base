@@ -3,6 +3,7 @@ codeunit 85122 "RDBC_Base_DocImpProcessMgt"
     // Called from the Staging Table Page by click on "Process Validated Lines"ProcessValidatedDocuments
     procedure ProcessValidatedDocuments(var Staging: Record "RDBC_Base_DocImp_Staging")
     var
+        Features: Codeunit "RDBC_Base_Features";
         DataImportName: Text[50];
         CheckRec: Record "RDBC_Base_DocImp_Staging";
         ProgressDialog: Dialog;
@@ -22,6 +23,7 @@ codeunit 85122 "RDBC_Base_DocImpProcessMgt"
         Events: Codeunit "RDBC_Base_Events";
 
     begin
+        Features.CheckDocumentUploadAllowed();
         DataImportName := Staging."Data Import Name";
 
         // Ensure ALL lines in batch are validated and not processed

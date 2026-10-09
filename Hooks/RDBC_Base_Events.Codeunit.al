@@ -64,6 +64,24 @@ codeunit 85160 "RDBC_Base_Events"
 
     #ENDREGION JOURNAL IMPORT
 
+    #REGION FEATURES
+
+    // "Allow Document Upload": set Allow := false to switch off Document Import completely
+    // (tiles, upload page, staging pages and processing).
+    [IntegrationEvent(false, false)]
+    procedure OnAllowDocumentUpload(var Allow: Boolean)
+    begin
+    end;
+
+    // "Allow Journal Upload": set Allow := false to switch off Journal Import completely
+    // (tiles, upload page, staging page and processing).
+    [IntegrationEvent(false, false)]
+    procedure OnAllowJournalUpload(var Allow: Boolean)
+    begin
+    end;
+
+    #ENDREGION FEATURES
+
     #REGION USER INTERFACE
 
     // Document Import tiles on the role center are shown by default. Set Show := false to hide them.

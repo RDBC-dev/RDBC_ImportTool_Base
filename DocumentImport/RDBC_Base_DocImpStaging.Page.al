@@ -162,6 +162,13 @@ page 85101 "RDBC_Base_Doc_Imp_Staging"
         else
             IsEditable := true;
     end;
+
+    trigger OnOpenPage()
+    var
+        Features: Codeunit "RDBC_Base_Features";
+    begin
+        Features.CheckDocumentUploadAllowed();
+    end;
 }
 
 page 85102 "RDBC_Base_DocImpStagingLookup"
@@ -186,4 +193,11 @@ page 85102 "RDBC_Base_DocImpStagingLookup"
         }
     }
 
+
+    trigger OnOpenPage()
+    var
+        Features: Codeunit "RDBC_Base_Features";
+    begin
+        Features.CheckDocumentUploadAllowed();
+    end;
 }
