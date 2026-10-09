@@ -66,6 +66,12 @@ codeunit 85160 "RDBC_Base_Events"
 
     #REGION USER INTERFACE
 
+    // Document Import tiles on the role center are shown by default. Set Show := false to hide them.
+    [IntegrationEvent(false, false)]
+    procedure OnShowDocumentImportTiles(var Show: Boolean)
+    begin
+    end;
+
     // Journal Import tiles on the role center are shown by default. Set Show := false to hide them.
     [IntegrationEvent(false, false)]
     procedure OnShowJournalImportTiles(var Show: Boolean)

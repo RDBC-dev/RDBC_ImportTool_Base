@@ -12,6 +12,8 @@ page 85104 "RDBC_Base_DocImpRC_Cue"
         {
             cuegroup("Document Imports")
             {
+                Visible = ShowDocTiles;
+
                 // Validation Errors
                 field("Validation Errors"; ValidationErrorCount)
                 {
@@ -151,7 +153,8 @@ page 85104 "RDBC_Base_DocImpRC_Cue"
                         Caption = 'Document Import';
                         ToolTip = 'Create new sales or purchase documents.';
                         Image = TileNew;
-                        RunObject = page RDBC_Base_DocImpExcel; // Replace with your page
+                        Visible = ShowDocTiles;
+                        RunObject = page RDBC_Base_DocImpExcel;
                         RunPageMode = Create; // <-- THIS is the magic property that makes the "+" icon appear
                     }
                     action(NewJnlImport)
@@ -179,12 +182,15 @@ page 85104 "RDBC_Base_DocImpRC_Cue"
         MyImportsCount: Integer;
         ImportTile: Integer;
         ShowJnlTiles: Boolean;
+        ShowDocTiles: Boolean;
 
     trigger OnOpenPage()
     var
         Events: Codeunit "RDBC_Base_Events";
     begin
-        // Journal Import tiles are shown unless a customer extension hides them
+        // Document and Journal Import tiles are shown unless a customer extension hides them
+        ShowDocTiles := true;
+        Events.OnShowDocumentImportTiles(ShowDocTiles);
         ShowJnlTiles := true;
         Events.OnShowJournalImportTiles(ShowJnlTiles);
 
@@ -258,6 +264,8 @@ page 85103 "RDBC_Base_DocImp_Cues"
         {
             cuegroup("Document Import")
             {
+                Visible = ShowDocTiles;
+
                 // Validation Errors
                 field("Validation Errors"; ValidationErrorCount)
                 {
@@ -348,12 +356,15 @@ page 85103 "RDBC_Base_DocImp_Cues"
         MyImportsCount: Integer;
         ImportTile: Integer;
         ShowJnlTiles: Boolean;
+        ShowDocTiles: Boolean;
 
     trigger OnOpenPage()
     var
         Events: Codeunit "RDBC_Base_Events";
     begin
-        // Journal Import tiles are shown unless a customer extension hides them
+        // Document and Journal Import tiles are shown unless a customer extension hides them
+        ShowDocTiles := true;
+        Events.OnShowDocumentImportTiles(ShowDocTiles);
         ShowJnlTiles := true;
         Events.OnShowJournalImportTiles(ShowJnlTiles);
 
@@ -406,6 +417,8 @@ page 85105 "RDBC_Base_JnlImp_Cues"
         {
             cuegroup("Journal Import")
             {
+                Visible = ShowJnlTiles;
+
                 // Validation Errors
                 field("Validation Errors"; ValidationErrorCount)
                 {
@@ -468,6 +481,8 @@ page 85105 "RDBC_Base_JnlImp_Cues"
             }
             cuegroup("Document Import")
             {
+                Visible = ShowDocTiles;
+
                 field("Import Documents"; ImportTile)
                 {
                     Caption = 'Import Document Lines';
@@ -493,9 +508,19 @@ page 85105 "RDBC_Base_JnlImp_Cues"
         ValidationAllCount: Integer;
         MyImportsCount: Integer;
         ImportTile: Integer;
+        ShowJnlTiles: Boolean;
+        ShowDocTiles: Boolean;
 
     trigger OnOpenPage()
+    var
+        Events: Codeunit "RDBC_Base_Events";
     begin
+        // Document and Journal Import tiles are shown unless a customer extension hides them
+        ShowDocTiles := true;
+        Events.OnShowDocumentImportTiles(ShowDocTiles);
+        ShowJnlTiles := true;
+        Events.OnShowJournalImportTiles(ShowJnlTiles);
+
         // SourceTable is temporary and only used to satisfy the Card Part's need for a
         // current record - without it, the cue renders blank whenever the real staging
         // table has no rows, regardless of the counts computed below.
