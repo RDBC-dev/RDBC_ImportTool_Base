@@ -3,7 +3,7 @@ page 85100 "RDBC_Base_DocImpExcel"
     PageType = Card;
     ApplicationArea = All;
     UsageCategory = Tasks;
-    Caption = 'RDBC Document Upload';
+    Caption = 'Document Upload';
 
     layout
     {
@@ -92,6 +92,7 @@ page 85100 "RDBC_Base_DocImpExcel"
                 Promoted = true;
                 PromotedCategory = Process;
                 ApplicationArea = All;
+                Visible = CsvUploadAllowed;
 
                 trigger OnAction()
                 var
@@ -135,7 +136,11 @@ page 85100 "RDBC_Base_DocImpExcel"
 
     var
         DataImportName: Text[50];
-        InstructionText: TextConst ENU =
+        CsvUploadAllowed: Boolean;
+        InstructionText: Text;
+        InstructionExcelTxt: TextConst ENU =
+        '1. Enter a Name for your Data Import. This will be attached to all created documents.\2. Click "Import Excel File".\3. Choose your Excel file (.xlsx, worksheet must be named "IMPORT").\4. The data from your file will be imported into a table and shown.';
+        InstructionExcelCsvTxt: TextConst ENU =
         '1. Enter a Name for your Data Import. This will be attached to all created documents.\2. Click "Import Excel File" or "Import CSV File".\3. Choose your Excel file (.xlsx, worksheet must be named "IMPORT") or your CSV file (.csv, any name, comma or semicolon separated).\4. The data from your file will be imported into a table and shown.';
         DocumentTypeText: TextConst ENU = 'You can create Orders and Invoices for Sales and Purchases.\When creating Credit Memos column 26 (Apply to Document) must contain the Posted Invoice No. or the External Document No. referenced on the Posted Invoice to apply the credit memo to.';
         SelectedImportName: Code[50];
@@ -167,5 +172,12 @@ page 85100 "RDBC_Base_DocImpExcel"
         Features: Codeunit "RDBC_Base_Features";
     begin
         Features.CheckDocumentUploadAllowed();
+        CurrPage.Caption := Features.GetCaption(CurrPage.Caption);
+
+        CsvUploadAllowed := Features.IsDocumentCsvUploadAllowed();
+        if CsvUploadAllowed then
+            InstructionText := InstructionExcelCsvTxt
+        else
+            InstructionText := InstructionExcelTxt;
     end;
 }

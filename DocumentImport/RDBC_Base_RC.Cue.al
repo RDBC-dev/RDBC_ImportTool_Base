@@ -4,7 +4,7 @@ page 85104 "RDBC_Base_DocImpRC_Cue"
     SourceTable = "RDBC_Base_DocImp_Staging";
     SourceTableTemporary = true;
     ApplicationArea = All;
-    Caption = 'RDBC Import Tool';
+    Caption = 'Import Tool';
 
     layout
     {
@@ -191,6 +191,7 @@ page 85104 "RDBC_Base_DocImpRC_Cue"
         // Tiles are shown only for the import areas that are allowed (Allow Document/Journal Upload)
         ShowDocTiles := Features.IsDocumentUploadAllowed();
         ShowJnlTiles := Features.IsJournalUploadAllowed();
+        CurrPage.Caption := Features.GetCaption(CurrPage.Caption);
 
         // SourceTable is temporary and only used to satisfy the Card Part's need for a
         // current record - without it, the cue renders blank whenever the real staging
@@ -254,7 +255,7 @@ page 85103 "RDBC_Base_DocImp_Cues"
     SourceTable = "RDBC_Base_DocImp_Staging";
     SourceTableTemporary = true;
     ApplicationArea = All;
-    Caption = 'RDBC Document Import';
+    Caption = 'Document Import';
 
     layout
     {
@@ -363,6 +364,7 @@ page 85103 "RDBC_Base_DocImp_Cues"
         // Tiles are shown only for the import areas that are allowed (Allow Document/Journal Upload)
         ShowDocTiles := Features.IsDocumentUploadAllowed();
         ShowJnlTiles := Features.IsJournalUploadAllowed();
+        CurrPage.Caption := Features.GetCaption(CurrPage.Caption);
 
         // SourceTable is temporary and only used to satisfy the Card Part's need for a
         // current record - without it, the cue renders blank whenever the real staging
@@ -405,7 +407,7 @@ page 85105 "RDBC_Base_JnlImp_Cues"
     SourceTable = "RDBC_Base_JnlImp_Staging";
     SourceTableTemporary = true;
     ApplicationArea = All;
-    Caption = 'RDBC Journal Import Tool';
+    Caption = 'Journal Import Tool';
 
     layout
     {
@@ -514,6 +516,7 @@ page 85105 "RDBC_Base_JnlImp_Cues"
         // Tiles are shown only for the import areas that are allowed (Allow Document/Journal Upload)
         ShowDocTiles := Features.IsDocumentUploadAllowed();
         ShowJnlTiles := Features.IsJournalUploadAllowed();
+        CurrPage.Caption := Features.GetCaption(CurrPage.Caption);
 
         // SourceTable is temporary and only used to satisfy the Card Part's need for a
         // current record - without it, the cue renders blank whenever the real staging

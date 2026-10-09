@@ -98,7 +98,7 @@ codeunit 85130 "RDBC_Base_JnlImpExcelMgt"
         IsFirstLine: Boolean;
         EvalOk: Boolean;
     begin
-        Features.CheckJournalUploadAllowed();
+        Features.CheckJournalCsvUploadAllowed();
         if DataImportName = '' then
             Error('Data Import Name must be filled.');
 

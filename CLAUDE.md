@@ -59,15 +59,22 @@ Legacy apps being replaced (do **not** change them; read-only reference):
 | Event | Use |
 |---|---|
 | `OnAllowDocumentUpload(var Allow)` / `OnAllowJournalUpload(var Allow)` | **Mandatory**: which import areas the customer may use |
+| `OnAllowDocumentCsvUpload(var Allow)` / `OnAllowJournalCsvUpload(var Allow)` | Show "Import CSV File" in an allowed area (off by default; Excel upload is always available) |
 | `OnValidateCustomDocumentType` / `OnProcessCustomDocumentType` / `OnShowProcessingResultCustomDocumentType` | Own Document Import Types added via `enumextension` on `RDBC_Base_DocImpType` (see CET "Float") |
 | `OnAfterValidateDocumentLine` | Extra checks on document staging lines |
 | `OnAfterReadJournalExcelRow` / `OnAfterReadJournalCsvRow` | Read extra journal columns (e.g. RWB Additional Dimensions, columns 21–23) |
 | `OnAfterValidateJournalLine` | Extra checks on journal staging lines |
 | `OnAddJournalDimensions` | Add extra dimensions to created journal lines |
 | `OnGetDocumentProgressMessages` / `OnGetJournalProgressMessages` | Customer-specific "processing…" texts |
+| `OnGetProductName(var ProductName)` | Name in front of the page captions (default `RDBC`, e.g. "RDBC Document Upload"; `''` = no prefix) |
+
+Page captions are compiled **without** a prefix ("Document Upload"); upload, staging and role center cue pages
+add the product name at runtime in `OnOpenPage` via `RDBC_Base_Features.GetCaption(CurrPage.Caption)`.
+BC search and table captions always show the compiled (neutral) caption.
 
 Public helpers: `RDBC_Base_ImportHelper` (85161: `AddError`, `ValidateDimensionValue`, `SetDimension`),
-`RDBC_Base_Features` (85162: `IsDocumentUploadAllowed`, `IsJournalUploadAllowed`, `Check…`),
+`RDBC_Base_Features` (85162: `IsDocumentUploadAllowed`, `IsJournalUploadAllowed`,
+`IsDocumentCsvUploadAllowed`, `IsJournalCsvUploadAllowed`, `Check…`),
 `RDBC_Base_DocImpValidationMgt.ValidateLineAs(Type, Staging, ErrorText)` (validate a custom type like a
 standard one), and the processors, e.g. `RDBC_Base_PI_Processor.Process` / `ShowProcessingResultForPI`.
 

@@ -3,7 +3,7 @@ page 85110 "RDBC_Base_JnlImpExcel"
     PageType = Card;
     ApplicationArea = All;
     UsageCategory = Tasks;
-    Caption = 'RDBC Journal Upload';
+    Caption = 'Journal Upload';
 
     layout
     {
@@ -88,6 +88,7 @@ page 85110 "RDBC_Base_JnlImpExcel"
                 Promoted = true;
                 PromotedCategory = Process;
                 ApplicationArea = All;
+                Visible = CsvUploadAllowed;
 
                 trigger OnAction()
                 var
@@ -131,7 +132,11 @@ page 85110 "RDBC_Base_JnlImpExcel"
 
     var
         DataImportName: Text[50];
-        InstructionText: TextConst ENU =
+        CsvUploadAllowed: Boolean;
+        InstructionText: Text;
+        InstructionExcelTxt: TextConst ENU =
+        '1. Enter a Name for you Import. It will be added to Journal Lines.\2. Click "Import Excel File".\3. Choose your Excel file (.xlsx, worksheet must be named "IMPORT").\4. The data from your file will be imported into a table and shown.';
+        InstructionExcelCsvTxt: TextConst ENU =
         '1. Enter a Name for you Import. It will be added to Journal Lines.\2. Click "Import Excel File" or "Import CSV File".\3. Choose your Excel file (.xlsx, worksheet must be named "IMPORT") or your CSV file (.csv, any name, comma or semicolon separated).\4. The data from your file will be imported into a table and shown.';
         JournalTypeText: TextConst ENU = 'Supported Journal Import Types: General, Sales Payment and Purchase Payment.\For Sales Payment lines, use Type = Customer; for Purchase Payment lines, use Type = Vendor; both must fill Applies-to Invoice No. in column Z.\Bal. Account No. can be left blank for these lines - use a separate line with Type = Bank Account (and no Bal. Account) in the same Document No. to fund/balance the payment.';
         SelectedImportName: Code[50];
@@ -163,5 +168,12 @@ page 85110 "RDBC_Base_JnlImpExcel"
         Features: Codeunit "RDBC_Base_Features";
     begin
         Features.CheckJournalUploadAllowed();
+        CurrPage.Caption := Features.GetCaption(CurrPage.Caption);
+
+        CsvUploadAllowed := Features.IsJournalCsvUploadAllowed();
+        if CsvUploadAllowed then
+            InstructionText := InstructionExcelCsvTxt
+        else
+            InstructionText := InstructionExcelTxt;
     end;
 }

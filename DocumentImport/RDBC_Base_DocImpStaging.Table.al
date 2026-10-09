@@ -1,7 +1,7 @@
 table 85100 "RDBC_Base_DocImp_Staging"
 {
     DataClassification = CustomerContent;
-    Caption = 'RDBC Document Import Staging Table';
+    Caption = 'Document Import Staging Table';
     DataCaptionFields = "Data Import Name", "Document Import Type";
 
 

@@ -94,7 +94,7 @@ codeunit 85120 "RDBC_Base_DocImpExcelMgt"
         IsFirstLine: Boolean;
         EvalOk: Boolean;
     begin
-        Features.CheckDocumentUploadAllowed();
+        Features.CheckDocumentCsvUploadAllowed();
         if DataImportName = '' then
             Error('Data Import Name must be filled.');
 

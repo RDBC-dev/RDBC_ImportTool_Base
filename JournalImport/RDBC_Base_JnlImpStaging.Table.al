@@ -1,7 +1,7 @@
 table 85111 "RDBC_Base_JnlImp_Staging"
 {
     DataClassification = CustomerContent;
-    Caption = 'RDBC Journal Import Staging Table';
+    Caption = 'Journal Import Staging Table';
     DataCaptionFields = "Data Import Name", "Journal Import Type";
 
 

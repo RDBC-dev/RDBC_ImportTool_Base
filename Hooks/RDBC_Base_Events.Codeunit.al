@@ -80,9 +80,32 @@ codeunit 85160 "RDBC_Base_Events"
     begin
     end;
 
+    // "Allow Document CSV Upload": NOT allowed by default. The customer extension sets Allow := true
+    // to show the "Import CSV File" action on the document upload page. Only effective when
+    // Document Upload is allowed as well; Excel upload is not affected.
+    [IntegrationEvent(false, false)]
+    procedure OnAllowDocumentCsvUpload(var Allow: Boolean)
+    begin
+    end;
+
+    // "Allow Journal CSV Upload": NOT allowed by default. The customer extension sets Allow := true
+    // to show the "Import CSV File" action on the journal upload page. Only effective when
+    // Journal Upload is allowed as well; Excel upload is not affected.
+    [IntegrationEvent(false, false)]
+    procedure OnAllowJournalCsvUpload(var Allow: Boolean)
+    begin
+    end;
+
     #ENDREGION FEATURES
 
     #REGION USER INTERFACE
+
+    // Product name shown in front of the page captions (upload pages, staging pages, role center parts),
+    // e.g. "RDBC Document Upload". Default 'RDBC'; set ProductName to the customer's name, or '' for none.
+    [IntegrationEvent(false, false)]
+    procedure OnGetProductName(var ProductName: Text)
+    begin
+    end;
 
     // Replace or extend the texts shown while documents are processed.
     // Set IsHandled := true to use only the subscriber's list.
