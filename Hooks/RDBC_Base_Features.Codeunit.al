@@ -1,6 +1,8 @@
-// Central switches for the two import areas. Both are allowed by default;
-// a customer extension can switch an area off via OnAllowDocumentUpload / OnAllowJournalUpload.
-// When an area is switched off, its tiles are hidden and its pages and processing cannot be used.
+// Central switches for the two import areas. Both are NOT allowed by default:
+// the customer extension decides what the customer may use, via OnAllowDocumentUpload /
+// OnAllowJournalUpload. Without a customer extension nothing can be used, so uninstalling
+// the customer extension never unlocks functionality.
+// When an area is not allowed, its tiles are hidden and its pages and processing cannot be used.
 codeunit 85162 "RDBC_Base_Features"
 {
     var
@@ -11,7 +13,7 @@ codeunit 85162 "RDBC_Base_Features"
     var
         Events: Codeunit "RDBC_Base_Events";
     begin
-        Allow := true;
+        Allow := false;
         Events.OnAllowDocumentUpload(Allow);
     end;
 
@@ -19,7 +21,7 @@ codeunit 85162 "RDBC_Base_Features"
     var
         Events: Codeunit "RDBC_Base_Events";
     begin
-        Allow := true;
+        Allow := false;
         Events.OnAllowJournalUpload(Allow);
     end;
 

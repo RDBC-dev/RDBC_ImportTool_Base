@@ -66,15 +66,15 @@ codeunit 85160 "RDBC_Base_Events"
 
     #REGION FEATURES
 
-    // "Allow Document Upload": set Allow := false to switch off Document Import completely
-    // (role center tiles, upload page, staging pages and processing).
+    // "Allow Document Upload": NOT allowed by default. The customer extension sets Allow := true
+    // to make Document Import available (role center tiles, upload page, staging pages and processing).
     [IntegrationEvent(false, false)]
     procedure OnAllowDocumentUpload(var Allow: Boolean)
     begin
     end;
 
-    // "Allow Journal Upload": set Allow := false to switch off Journal Import completely
-    // (role center tiles, upload page, staging page and processing).
+    // "Allow Journal Upload": NOT allowed by default. The customer extension sets Allow := true
+    // to make Journal Import available (role center tiles, upload page, staging page and processing).
     [IntegrationEvent(false, false)]
     procedure OnAllowJournalUpload(var Allow: Boolean)
     begin
