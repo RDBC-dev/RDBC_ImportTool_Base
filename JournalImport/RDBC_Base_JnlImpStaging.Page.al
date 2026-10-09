@@ -139,6 +139,9 @@ page 85111 "RDBC_Base_JnlImp_Staging"
     var
         ShowValidationFields: Boolean;
         ShowProcessingFields: Boolean;
+
+    // Protected so customer page extensions can lock their own fields the same way
+    protected var
         IsEditable: Boolean;
 
     procedure SetValidationView()

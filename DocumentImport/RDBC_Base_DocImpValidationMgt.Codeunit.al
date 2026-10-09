@@ -34,35 +34,14 @@ codeunit 85121 "RDBC_Base_DocImpValidationMgt"
     begin
         ErrorText := '';
 
-        case Staging."Document Import Type" of
-
-            Staging."Document Import Type"::"PO":
-                ValidatePO(Staging, ErrorText);
-
-            Staging."Document Import Type"::"PI":
-                //ValidateExpense(Staging, ErrorText);
-                ValidatePI(Staging, ErrorText);
-
-            Staging."Document Import Type"::"PCM":
-                //ValidateExpense(Staging, ErrorText);
-                ValidatePCM(Staging, ErrorText);
-
-            Staging."Document Import Type"::"SO":
-                ValidateSO(Staging, ErrorText);
-
-            Staging."Document Import Type"::"SI":
-                ValidateSI(Staging, ErrorText);
-
-            Staging."Document Import Type"::"SCM":
-                ValidateSCM(Staging, ErrorText);
-
-            else begin
-                // Document Import Types added by customer extensions (enumextension)
-                IsHandled := false;
-                Events.OnValidateCustomDocumentType(Staging, ErrorText, IsHandled);
-                if not IsHandled then
-                    AddError(ErrorText, StrSubstNo('Document Import Type %1 is not supported.', Staging."Document Import Type"));
-            end;
+        if IsBaseDocumentType(Staging."Document Import Type") then
+            ValidateLineAs(Staging."Document Import Type", Staging, ErrorText)
+        else begin
+            // Document Import Types added by customer extensions (enumextension)
+            IsHandled := false;
+            Events.OnValidateCustomDocumentType(Staging, ErrorText, IsHandled);
+            if not IsHandled then
+                AddError(ErrorText, StrSubstNo('Document Import Type %1 is not supported.', Staging."Document Import Type"));
         end;
 
         Events.OnAfterValidateDocumentLine(Staging, ErrorText);
@@ -78,6 +57,35 @@ codeunit 85121 "RDBC_Base_DocImpValidationMgt"
             Staging.Modify();
             exit(false);
         end;
+    end;
+
+    // Runs the base validation of a standard Document Import Type on a staging line.
+    // Customer extensions use this for their own types, e.g. "validate like a Purchase Invoice".
+    procedure ValidateLineAs(DocumentImportType: Enum "RDBC_Base_DocImpType"; var Staging: Record "RDBC_Base_DocImp_Staging"; var ErrorText: Text[1024])
+    begin
+        case DocumentImportType of
+            DocumentImportType::"PO":
+                ValidatePO(Staging, ErrorText);
+            DocumentImportType::"PI":
+                ValidatePI(Staging, ErrorText);
+            DocumentImportType::"PCM":
+                ValidatePCM(Staging, ErrorText);
+            DocumentImportType::"SO":
+                ValidateSO(Staging, ErrorText);
+            DocumentImportType::"SI":
+                ValidateSI(Staging, ErrorText);
+            DocumentImportType::"SCM":
+                ValidateSCM(Staging, ErrorText);
+            else
+                AddError(ErrorText, StrSubstNo('Document Import Type %1 has no base validation.', DocumentImportType));
+        end;
+    end;
+
+    local procedure IsBaseDocumentType(DocumentImportType: Enum "RDBC_Base_DocImpType"): Boolean
+    begin
+        exit(DocumentImportType in
+            [DocumentImportType::"PO", DocumentImportType::"PI", DocumentImportType::"PCM",
+             DocumentImportType::"SO", DocumentImportType::"SI", DocumentImportType::"SCM"]);
     end;
 
     // called by staging page action, validates only the lines currently filtered in the page
