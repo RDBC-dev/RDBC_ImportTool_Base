@@ -168,7 +168,6 @@ page 85110 "RDBC_Base_JnlImpExcel"
         Features: Codeunit "RDBC_Base_Features";
     begin
         Features.CheckJournalUploadAllowed();
-        CurrPage.Caption := Features.GetCaption(CurrPage.Caption);
 
         CsvUploadAllowed := Features.IsJournalCsvUploadAllowed();
         if CsvUploadAllowed then

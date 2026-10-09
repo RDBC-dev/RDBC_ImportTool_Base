@@ -100,13 +100,6 @@ codeunit 85160 "RDBC_Base_Events"
 
     #REGION USER INTERFACE
 
-    // Product name shown in front of the page captions (upload pages, staging pages, role center parts),
-    // e.g. "RDBC Document Upload". Default 'RDBC'; set ProductName to the customer's name, or '' for none.
-    [IntegrationEvent(false, false)]
-    procedure OnGetProductName(var ProductName: Text)
-    begin
-    end;
-
     // Replace or extend the texts shown while documents are processed.
     // Set IsHandled := true to use only the subscriber's list.
     [IntegrationEvent(false, false)]

@@ -172,7 +172,6 @@ page 85100 "RDBC_Base_DocImpExcel"
         Features: Codeunit "RDBC_Base_Features";
     begin
         Features.CheckDocumentUploadAllowed();
-        CurrPage.Caption := Features.GetCaption(CurrPage.Caption);
 
         CsvUploadAllowed := Features.IsDocumentCsvUploadAllowed();
         if CsvUploadAllowed then

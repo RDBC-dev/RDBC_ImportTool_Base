@@ -171,6 +171,5 @@ page 85111 "RDBC_Base_JnlImp_Staging"
         Features: Codeunit "RDBC_Base_Features";
     begin
         Features.CheckJournalUploadAllowed();
-        CurrPage.Caption := Features.GetCaption(CurrPage.Caption);
     end;
 }

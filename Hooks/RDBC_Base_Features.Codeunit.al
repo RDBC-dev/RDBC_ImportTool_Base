@@ -5,7 +5,6 @@
 // When an area is not allowed, its tiles are hidden and its pages and processing cannot be used.
 // CSV upload is a separate switch per area (OnAllowDocumentCsvUpload / OnAllowJournalCsvUpload),
 // also NOT allowed by default, and only effective when the area itself is allowed.
-// GetCaption puts the product name (default 'RDBC', customer app: OnGetProductName) in front of page captions.
 codeunit 85162 "RDBC_Base_Features"
 {
     var
@@ -76,25 +75,5 @@ codeunit 85162 "RDBC_Base_Features"
         CheckJournalUploadAllowed();
         if not IsJournalCsvUploadAllowed() then
             Error(JournalCsvUploadNotAllowedErr);
-    end;
-
-    procedure GetProductName() ProductName: Text
-    var
-        Events: Codeunit "RDBC_Base_Events";
-    begin
-        ProductName := 'RDBC';
-        Events.OnGetProductName(ProductName);
-    end;
-
-    // Returns BaseCaption with the product name in front, e.g. 'Document Upload' -> 'RDBC Document Upload'.
-    procedure GetCaption(BaseCaption: Text): Text
-    var
-        ProductName: Text;
-    begin
-        ProductName := GetProductName().Trim();
-        if ProductName = '' then
-            exit(BaseCaption);
-
-        exit(ProductName + ' ' + BaseCaption);
     end;
 }

@@ -168,7 +168,6 @@ page 85101 "RDBC_Base_Doc_Imp_Staging"
         Features: Codeunit "RDBC_Base_Features";
     begin
         Features.CheckDocumentUploadAllowed();
-        CurrPage.Caption := Features.GetCaption(CurrPage.Caption);
     end;
 }
 

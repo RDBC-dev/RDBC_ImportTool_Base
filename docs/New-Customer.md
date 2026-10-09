@@ -105,7 +105,6 @@ codeunit 852xx "RDBC_<CUSTOMER>_Customization"
 
 | Need | How | Example |
 |---|---|---|
-| Own name in page captions (instead of "RDBC") | Subscribe `OnGetProductName`, set `ProductName := '<Name>'` (or `''` for no prefix) | – |
 | Own processing messages | Subscribe `OnGetDocumentProgressMessages` / `OnGetJournalProgressMessages`, fill `Messages`, `IsHandled := true` | CET, RWB `…_Customization` |
 | Own document type | `enumextension` on `RDBC_Base_DocImpType` (value ID in 85200–85299) + subscribers `OnValidateCustomDocumentType`, `OnProcessCustomDocumentType`, `OnShowProcessingResultCustomDocumentType`. Reuse base logic via `ValidateLineAs(...)` and the `RDBC_Base_*_Processor` codeunits | CET `RDBC_CET_Float.Codeunit.al` |
 | Extra journal fields/columns/dimensions | `tableextension` + `pageextension` on `RDBC_Base_JnlImp_Staging` (page fields use `Editable = IsEditable`), subscribers `OnAfterReadJournalExcelRow`, `OnAfterReadJournalCsvRow`, `OnAfterValidateJournalLine`, `OnAddJournalDimensions`; use `RDBC_Base_ImportHelper` | RWB `JournalImport/` |

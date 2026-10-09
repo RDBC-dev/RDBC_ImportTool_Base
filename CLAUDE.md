@@ -66,11 +66,8 @@ Legacy apps being replaced (do **not** change them; read-only reference):
 | `OnAfterValidateJournalLine` | Extra checks on journal staging lines |
 | `OnAddJournalDimensions` | Add extra dimensions to created journal lines |
 | `OnGetDocumentProgressMessages` / `OnGetJournalProgressMessages` | Customer-specific "processing…" texts |
-| `OnGetProductName(var ProductName)` | Name in front of the page captions (default `RDBC`, e.g. "RDBC Document Upload"; `''` = no prefix) |
-
-Page captions are compiled **without** a prefix ("Document Upload"); upload, staging and role center cue pages
-add the product name at runtime in `OnOpenPage` via `RDBC_Base_Features.GetCaption(CurrPage.Caption)`.
-BC search and table captions always show the compiled (neutral) caption.
+Page and table captions are neutral, without "RDBC" or a customer name (e.g. "Document Upload"). Do not set
+captions at runtime (`CurrPage.Caption`): BC search always shows the compiled caption, and the two must match.
 
 Public helpers: `RDBC_Base_ImportHelper` (85161: `AddError`, `ValidateDimensionValue`, `SetDimension`),
 `RDBC_Base_Features` (85162: `IsDocumentUploadAllowed`, `IsJournalUploadAllowed`,
