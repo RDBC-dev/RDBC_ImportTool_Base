@@ -1,0 +1,35 @@
+{
+  "id": "fb89561f-4965-437c-abfd-14f49a9fdb29",
+  "name": "RDBC - ImportTool - Base",
+  "publisher": "RD Business Consulting",
+  "version": "1.0.0.0",
+  "brief": "",
+  "description": "Base extension of the RDBC Import Tool to bulk import purchase and sales documents and journals. Customer-specific functionality is added through separate extensions that depend on this one.",
+  "privacyStatement": "",
+  "EULA": "",
+  "help": "",
+  "url": "",
+  "logo": "Resources/RDBCImportTool.png",
+  "dependencies": [],
+  "screenshots": [],
+  "platform": "27.0.0.0",
+  "application": "27.0.0.0",
+  "idRanges": [
+    {
+      "from": 85100,
+      "to": 85199
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": false,
+    "allowDownloadingSource": false,
+    "includeSourceInSymbolFile": false
+  },
+  "runtime": "16.0",
+  "features": [
+    "NoImplicitWith"
+  ],
+  "resourceFolders": [
+    "Resources"
+  ]
+}
